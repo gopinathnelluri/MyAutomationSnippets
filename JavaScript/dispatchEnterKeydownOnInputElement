@@ -1,0 +1,8 @@
+// Get the input field element
+var input = document.getElementById("myInput");
+
+// Create a new "Enter" key event
+var event = new KeyboardEvent("keydown", { key: "Enter", keyCode: 13 });
+
+// Dispatch the "Enter" key event on the input field
+input.dispatchEvent(event);
