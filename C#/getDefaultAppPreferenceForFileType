@@ -1,0 +1,21 @@
+using System.Management;
+
+public static string GetFileAssociation(string extension)
+{
+    // Create a WMI object
+    ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM CIM_DataFile WHERE Extension='" + extension + "'");
+    
+    // Execute the query and get the first result
+    ManagementObjectCollection files = searcher.Get();
+    if (files.Count > 0)
+    {
+        ManagementObject file = files.Cast<ManagementObject>().First();
+        return file["AssociatedApplicati"].ToString();
+    }
+    
+    return null;
+}
+
+// Example usage: get the associated application for .txt files
+string appPath = GetFileAssociation(".txt");
+Console.WriteLine(appPath);
