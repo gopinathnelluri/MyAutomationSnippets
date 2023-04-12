@@ -1,0 +1,28 @@
+using System;
+using System.Management;
+
+public static string[] GetFileExtensions()
+{
+    // Create a WMI object
+    ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM CIM_DataFile");
+    
+    // Execute the query and get the list of file extensions
+    ManagementObjectCollection files = searcher.Get();
+    HashSet<string> extensions = new HashSet<string>();
+    foreach (ManagementObject file in files)
+    {
+        string extension = file["Extension"].ToString().ToLowerInvariant();
+        if (!string.IsNullOrEmpty(extension) && !extensions.Contains(extension))
+        {
+            extensions.Add(extension);
+        }
+    }
+    return extensions.ToArray();
+}
+
+// Example usage: get a list of all file extensions
+string[] extensions = GetFileExtensions();
+foreach (string extension in extensions)
+{
+    Console.WriteLine(extension);
+}
