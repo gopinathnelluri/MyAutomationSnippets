@@ -1,0 +1,23 @@
+using System;
+using System.Management;
+
+public static void PrintFileAssociationProperties()
+{
+    // Create a WMI object
+    ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM CIM_DataFile");
+    
+    // Execute the query and print the property names
+    ManagementObjectCollection files = searcher.Get();
+    foreach (ManagementObject file in files)
+    {
+        Console.WriteLine("Properties for file association: " + file["Extension"]);
+        foreach (PropertyData property in file.Properties)
+        {
+            Console.WriteLine(property.Name);
+        }
+        Console.WriteLine();
+    }
+}
+
+// Example usage: print the properties of all file associations
+PrintFileAssociationProperties();
