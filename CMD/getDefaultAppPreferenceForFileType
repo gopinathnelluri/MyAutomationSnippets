@@ -1,0 +1,1 @@
+REG QUERY HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.txt\UserChoice /v Progid
