@@ -1,0 +1,91 @@
+//Pending Validation
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
+
+namespace ChromeProfileUpdater
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Input parameters
+            string profilePath = args[0];
+            string keyToUpdate = args[1];
+            string newValue = args[2];
+
+            // Close all Chrome instances
+            CloseAllChromeInstances();
+
+            // Update Chrome profile configuration
+            UpdateProfileConfig(profilePath, keyToUpdate, newValue);
+
+            // Launch Chrome
+            LaunchChrome();
+
+            // Validate updated configs
+            Console.WriteLine("Please validate the updated configurations manually.");
+        }
+
+        static void CloseAllChromeInstances()
+        {
+            Process[] chromeInstances = Process.GetProcessesByName("chrome");
+            foreach (Process chrome in chromeInstances)
+            {
+                chrome.Kill();
+            }
+        }
+
+        static void UpdateProfileConfig(string profilePath, string keyToUpdate, string newValue)
+        {
+            string configFilePath = Path.Combine(profilePath, "Preferences");
+
+            if (File.Exists(configFilePath))
+            {
+                string configJson = File.ReadAllText(configFilePath);
+                JsonElement root = JsonSerializer.Deserialize<JsonElement>(configJson);
+
+                var updatedRoot = UpdateNestedKey(root, keyToUpdate, newValue);
+
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string updatedConfigJson = JsonSerializer.Serialize(updatedRoot, options);
+                File.WriteAllText(configFilePath, updatedConfigJson);
+            }
+            else
+            {
+                Console.WriteLine("Config file not found. Please check the profile path.");
+            }
+        }
+
+        static JsonElement UpdateNestedKey(JsonElement element, string keyToUpdate, string newValue)
+        {
+            var newElement = new JsonObject();
+
+            foreach (var property in element.EnumerateObject())
+            {
+                if (property.Name.Equals(keyToUpdate))
+                {
+                    newElement.Add(property.Name, newValue);
+                }
+                else if (property.Value.ValueKind == JsonValueKind.Object)
+                {
+                    newElement.Add(property.Name, UpdateNestedKey(property.Value, keyToUpdate, newValue));
+                }
+                else
+                {
+                    newElement.Add(property.Name, property.Value.Clone());
+                }
+            }
+
+            return newElement.AsJsonElement();
+        }
+
+        static void LaunchChrome()
+        {
+            Process.Start("chrome");
+        }
+    }
+}
