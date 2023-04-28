@@ -80,5 +80,35 @@ namespace UpdateChromePreferences
                 keyValue.Value = value;
             }
         }
+        
+        // Read a key in a JObject object.
+private static JValue ReadKey(JObject prefsObject, string key)
+{
+    // Get the value of the key.
+    JValue keyValue = prefsObject;
+    foreach (string keyPart in key.Split('.'))
+    {
+        keyValue = keyValue.SelectToken(keyPart);
+    }
+    return keyValue;
+}
+
+// Update a key in a JObject object.
+private static void UpdateKey(JObject prefsObject, string key, string value)
+{
+    // Get the value of the key.
+    JValue keyValue = ReadKey(prefsObject, key);
+
+    // If the key does not exist, create it.
+    if (keyValue == null)
+    {
+        keyValue = new JObject();
+        prefsObject.Add(key, keyValue);
+    }
+
+    // Set the value of the key.
+    keyValue["first"] = value;
+}
+
     }
 }
