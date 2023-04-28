@@ -1,0 +1,84 @@
+using System;
+using System.IO;
+using System.Diagnostics;
+using Newtonsoft.Json;
+
+namespace UpdateChromePreferences
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Get the path to the Chrome preferences file.
+            string prefsFilePath = @"C:\Users\YourUserName\AppData\Local\Google\Chrome\User Data\Default\Preferences";
+
+            // Get the path to the backup preferences file.
+            string backupPrefsFilePath = @"C:\Users\YourUserName\Desktop\chrome_preferences_backup.json";
+
+            // Check if Chrome is running.
+            bool isChromeRunning = Process.GetProcessesByName("chrome").Any();
+
+            // If Chrome is running, kill it.
+            if (isChromeRunning)
+            {
+                Process.KillProcessesByName("chrome");
+            }
+
+            // Read the Chrome preferences file into a string.
+            string prefsString = File.ReadAllText(prefsFilePath);
+
+            // Deserialize the Chrome preferences string into a JObject object.
+            JObject prefsObject = JObject.Parse(prefsString);
+
+            // Update the value of the key-value pair.
+            UpdateKey(prefsObject, "profile.name.first", Environment.UserName);
+            UpdateKey(prefsObject, "profile.name.last", Environment.UserName);
+
+            // Serialize the JObject object back to a JSON string.
+            prefsString = JsonConvert.SerializeObject(prefsObject, Formatting.Indented);
+
+            // Write the JSON string to the file.
+            File.WriteAllText(prefsFilePath, prefsString);
+
+            // Write the backup preferences file.
+            File.WriteAllText(backupPrefsFilePath, prefsString);
+
+            // Get the machine user.
+            string machineUser;
+            try
+            {
+                machineUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            }
+            catch (Exception ex)
+            {
+                // If the current approach fails, use environment variables to read the user.
+                machineUser = Environment.GetEnvironmentVariable("USERNAME");
+            }
+
+            // Replace `YourUserName` with the machine user in the path.
+            prefsFilePath = prefsFilePath.Replace("YourUserName", machineUser);
+
+            // Write the JSON string to the file.
+            File.WriteAllText(prefsFilePath, prefsString);
+        }
+
+        // Update a key in a JObject object.
+        private static void UpdateKey(JObject prefsObject, string key, string value)
+        {
+            // Get the value of the key.
+            JValue keyValue = prefsObject[key];
+
+            // If the key does not exist, create it.
+            if (keyValue == null)
+            {
+                keyValue = new JValue(value);
+                prefsObject.Add(key, keyValue);
+            }
+            else
+            {
+                // Set the value of the key.
+                keyValue.Value = value;
+            }
+        }
+    }
+}
