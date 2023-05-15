@@ -1,0 +1,19 @@
+Set app = CreateObject("Outlook.Application")
+Set ns = app.GetNamespace("MAPI")
+
+' Create a new mail item.
+Set newMail = app.CreateItem(0)
+
+' Set the properties.
+newMail.Subject = "Subject of the mail"
+newMail.Body = "Body of the mail"
+newMail.Recipients.Add("recipient@example.com")
+
+' Set the sender
+newMail.SentOnBehalfOfName = "specificsender@example.com"
+
+' Add an attachment if required
+newMail.Attachments.Add "C:\path\to\your\file.txt"
+
+' Send the mail.
+newMail.Send
