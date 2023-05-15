@@ -1,0 +1,25 @@
+Function SendEmailWithOutlook(subject, body, recipient, sender, attachmentPath)
+    Set app = CreateObject("Outlook.Application")
+    Set ns = app.GetNamespace("MAPI")
+
+    ' Create a new mail item.
+    Set newMail = app.CreateItem(0)
+
+    ' Set the properties.
+    newMail.Subject = subject
+    newMail.Body = body
+    newMail.Recipients.Add(recipient)
+
+    ' Set the sender
+    newMail.SentOnBehalfOfName = sender
+
+    ' Add an attachment if required
+    If Len(attachmentPath) > 0 Then
+        newMail.Attachments.Add(attachmentPath)
+    End If
+
+    ' Send the mail.
+    newMail.Send
+End Function
+
+' SendEmailWithOutlook "Subject of the mail", "Body of the mail", "recipient@example.com", "specificsender@example.com", ""
