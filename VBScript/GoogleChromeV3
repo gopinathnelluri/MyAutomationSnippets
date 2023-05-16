@@ -1,0 +1,9 @@
+Set objShell = CreateObject("WScript.Shell")
+strChromePath = objShell.ExpandEnvironmentStrings("%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe")
+
+Set objReg = GetObject("winmgmts:\\.\root\default:StdRegProv")
+strKey = "HKLM\Software\Classes\Applications\chrome.exe\Version"
+
+objReg.GetStringValue strKey, "Version", strVersion
+
+WScript.Echo "The application version of Chrome is " & strVersion
