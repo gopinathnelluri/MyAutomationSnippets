@@ -1,0 +1,17 @@
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set folder = fso.GetFolder("C:\")
+
+strFileName = "myFile.txt" ' replace with your file name
+
+Call ShowSubFolders (folder)
+
+Sub ShowSubFolders(folder)
+    For Each file In folder.Files
+        If StrComp(file.Name, strFileName, vbTextCompare) = 0 Then
+            WScript.Echo file.Path
+        End If
+    Next
+    For Each subfolder In folder.Subfolders
+        ShowSubFolders(subfolder)
+    Next
+End Sub
