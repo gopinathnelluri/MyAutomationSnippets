@@ -1,0 +1,37 @@
+Option Explicit
+
+' Create a registry provider object
+Dim objRegistry
+Set objRegistry = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\\root\\default:StdRegProv")
+
+' Define possible registry key paths for Google Chrome
+Dim regKeyPaths(4)
+regKeyPaths(0) = "SOFTWARE\Google\Chrome"
+regKeyPaths(1) = "SOFTWARE\Wow6432Node\Google\Chrome"
+regKeyPaths(2) = "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe"
+regKeyPaths(3) = "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe"
+
+' Variable to hold the Google Chrome version
+Dim chromeVersion
+chromeVersion = Null
+
+' Loop through the possible registry key paths
+Dim i
+For i = 0 To UBound(regKeyPaths)
+    Dim keyExists
+    objRegistry.GetKeyValue &H80000002, regKeyPaths(i), "Version", keyExists
+
+    If Not IsNull(keyExists) Then
+        chromeVersion = keyExists
+        Exit For
+    End If
+Next
+
+If Not IsNull(chromeVersion) Then
+    WScript.Echo "Google Chrome Version: " & chromeVersion
+Else
+    WScript.Echo "Google Chrome version not found."
+End If
+
+' Release the object reference
+Set objRegistry = Nothing
