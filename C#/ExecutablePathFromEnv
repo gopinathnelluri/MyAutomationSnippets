@@ -1,0 +1,40 @@
+using System;
+using System.IO;
+using System.Linq;
+
+public static string FindExecutablePath(string executableName)
+{
+    // Get the PATH environment variable
+    string pathVariable = Environment.GetEnvironmentVariable("PATH");
+
+    // Split the PATH variable into a list of directories
+    string[] paths = pathVariable.Split(';');
+
+    // Try to find the executable in each directory
+    foreach (string path in paths)
+    {
+        // Form the full path of the executable in the current directory
+        string fullPath = Path.Combine(path, executableName);
+
+        // If the executable exists in this directory, return the full path
+        if (File.Exists(fullPath))
+        {
+            return fullPath;
+        }
+    }
+
+    // If the executable wasn't found in any of the directories, return null
+    return null;
+}
+
+// Usage
+string executableName = "chrome.exe";
+string path = FindExecutablePath(executableName);
+if (path != null)
+{
+    Console.WriteLine("Path of " + executableName + ": " + path);
+}
+else
+{
+    Console.WriteLine(executableName + " not found in PATH.");
+}
