@@ -1,0 +1,26 @@
+Option Explicit
+
+' Create a registry provider object
+Dim objRegistry
+Set objRegistry = GetObject("winmgmts:{impersonationLevel=impersonate}!root\default:StdRegProv")
+
+' Define the registry key path to check
+Dim regKeyPath
+regKeyPath = "SOFTWARE\Microsoft\Windows\CurrentVersion"
+
+' Enumerate the value names under the registry key
+Dim valueNames
+objRegistry.EnumValues &H80000002, regKeyPath, valueNames
+
+' Check if there are any value names
+If IsArray(valueNames) Then
+    Dim i
+    For i = 0 To UBound(valueNames)
+        WScript.Echo "Value Name: " & valueNames(i)
+    Next
+Else
+    WScript.Echo "No value names found under the registry key."
+End If
+
+' Release the object reference
+Set objRegistry = Nothing
