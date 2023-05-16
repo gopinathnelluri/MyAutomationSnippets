@@ -1,0 +1,27 @@
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set shell = CreateObject("Shell.Application")
+
+Dim paths(2)
+paths(0) = "C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\"
+paths(1) = "C:\Program Files\Adobe\Acrobat Reader DC\Reader\"
+Dim found
+found = False
+
+For Each path In paths
+    If fso.FolderExists(path) And Not found Then
+        Set folder = shell.Namespace(path)
+        If Not folder Is Nothing Then
+            Set file = folder.ParseName("AcroRd32.exe")
+            If Not file Is Nothing Then
+                Dim detailName
+                For i = 0 To 287
+                    detailName = folder.GetDetailsOf(folder.Items, i)
+                    If detailName = "Product version" Or detailName = "Publisher" Then
+                        WScript.Echo detailName & ": " & folder.GetDetailsOf(file, i)
+                    End If
+                Next
+                found = True ' Set found to true after printing details
+            End If
+        End If
+    End If
+Next
