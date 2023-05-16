@@ -1,0 +1,35 @@
+Option Explicit
+
+' Create a registry provider object
+Dim objRegistry
+Set objRegistry = GetObject("winmgmts:{impersonationLevel=impersonate}!\\.\\root\\default:StdRegProv")
+
+' Function to retrieve the version of an application
+Function GetApplicationVersion(appName)
+    ' Define the registry key path for the application installation
+    Dim regKeyPath
+    regKeyPath = "SOFTWARE\" & appName & "\InstallRoot"
+
+    ' Define the registry value name for version
+    Dim regValueName
+    regValueName = "Path"
+
+    ' Variable to hold the application version
+    Dim appVersion
+
+    ' Query the registry to retrieve the application version
+    objRegistry.GetStringValue &H80000002, regKeyPath, regValueName, appVersion
+
+    ' Return the version
+    GetApplicationVersion = appVersion
+End Function
+
+' Example usage
+Dim appName
+appName = "Adobe\Acrobat Reader\DC\Installer"
+Dim acrobatVersion
+acrobatVersion = GetApplicationVersion(appName)
+WScript.Echo "Adobe Acrobat Version: " & acrobatVersion
+
+' Release the object reference
+Set objRegistry = Nothing
