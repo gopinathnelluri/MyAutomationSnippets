@@ -1,0 +1,18 @@
+'Declare variables
+Dim fso
+Dim file
+Dim properties
+
+'Create a new FileSystemObject
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+'Get the file object
+Set file = fso.GetFile("C:\Windows\System32\scrrun.dll")
+
+'Get the properties of the file
+Set properties = file.Properties
+
+'Print the properties
+For Each prop In properties
+Wscript.Echo prop.Name & " = " & prop.Value
+Next
