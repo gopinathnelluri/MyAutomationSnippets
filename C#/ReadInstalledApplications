@@ -1,0 +1,46 @@
+using Microsoft.Win32;
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        const string uninstallKey64 = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
+        const string uninstallKey32 = @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall";
+
+        ReadInstalledApplications(uninstallKey64, RegistryView.Registry64);
+        ReadInstalledApplications(uninstallKey32, RegistryView.Registry32);
+
+        Console.ReadLine();
+    }
+
+    static void ReadInstalledApplications(string uninstallKey, RegistryView registryView)
+    {
+        using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
+        using (RegistryKey rk = baseKey.OpenSubKey(uninstallKey))
+        {
+            if (rk != null)
+            {
+                foreach (string subKeyName in rk.GetSubKeyNames())
+                {
+                    using (RegistryKey subKey = rk.OpenSubKey(subKeyName))
+                    {
+                        string displayName = subKey.GetValue("DisplayName") as string;
+                        string displayVersion = subKey.GetValue("DisplayVersion") as string;
+                        string installLocation = subKey.GetValue("InstallLocation") as string;
+                        string is64BitString = subKey.GetValue("Wow6432Node") != null ? "32-bit" : "64-bit";
+
+                        if (!string.IsNullOrEmpty(displayName))
+                        {
+                            Console.WriteLine("Name: " + displayName);
+                            Console.WriteLine("Version: " + displayVersion);
+                            Console.WriteLine("Bitness: " + is64BitString);
+                            Console.WriteLine("Install Location: " + installLocation);
+                            Console.WriteLine();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
