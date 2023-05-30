@@ -1,0 +1,50 @@
+sing System;
+using System.Management;
+
+class ScreenResolutionUpdater
+{
+    static void Main()
+    {
+        // Define the new screen resolution
+        int newWidth = 1920;
+        int newHeight = 1080;
+
+        try
+        {
+            // Query for the current screen resolution
+            using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration"))
+            using (var collection = searcher.Get())
+            {
+                foreach (var item in collection)
+                {
+                    // Get the screen settings
+                    int currentWidth = (int)item["ScreenWidth"];
+                    int currentHeight = (int)item["ScreenHeight"];
+                    int currentRefreshRate = (int)item["RefreshRate"];
+
+                    Console.WriteLine("Current Resolution: {0}x{1}, Refresh Rate: {2}Hz", currentWidth, currentHeight, currentRefreshRate);
+
+                    // Update the screen resolution if it's different
+                    if (currentWidth != newWidth || currentHeight != newHeight)
+                    {
+                        item["ScreenWidth"] = newWidth;
+                        item["ScreenHeight"] = newHeight;
+                        item.CommitChanges();
+
+                        Console.WriteLine("Screen resolution updated to: {0}x{1}, Refresh Rate: {2}Hz", newWidth, newHeight, currentRefreshRate);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Screen resolution is already set to the desired values.");
+                    }
+                }
+            }
+        }
+        catch (ManagementException e)
+        {
+            Console.WriteLine("Error: " + e.Message);
+        }
+
+        Console.ReadLine();
+    }
+}
