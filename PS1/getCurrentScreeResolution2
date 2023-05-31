@@ -1,0 +1,12 @@
+try {
+    $DisplaySettings = Get-WmiObject -Class Win32_VideoController
+
+    foreach ($Settings in $DisplaySettings) {
+        $CurrentWidth = $Settings.CurrentHorizontalResolution
+        $CurrentHeight = $Settings.CurrentVerticalResolution
+
+        Write-Host "Current Resolution: $CurrentWidth x $CurrentHeight"
+    }
+} catch {
+    Write-Host "Error: $_.Exception.Message"
+}
