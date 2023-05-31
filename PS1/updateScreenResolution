@@ -1,0 +1,37 @@
+# Set the desired screen resolution values
+$width = 1920
+$height = 1080
+
+# Create an instance of the Screen class
+$screen = [System.Windows.Forms.Screen]::PrimaryScreen
+
+# Check if the desired resolution is supported by the screen
+if ($screen.Bounds.Width -ge $width -and $screen.Bounds.Height -ge $height)
+{
+    # Create a new instance of the DEVMODE structure
+    $devMode = New-Object -TypeName 'PInvoke.User32+DEVMODE'
+
+    # Retrieve the current screen settings
+    [PInvoke.User32]::EnumDisplaySettings($screen.DeviceName, [PInvoke.User32]::ENUM_CURRENT_SETTINGS, [ref]$devMode) | Out-Null
+
+    # Update the screen resolution values
+    $devMode.dmPelsWidth = $width
+    $devMode.dmPelsHeight = $height
+
+    # Apply the new screen resolution settings
+    $result = [PInvoke.User32]::ChangeDisplaySettingsEx($screen.DeviceName, $devMode, 0, [PInvoke.User32]::CDS_UPDATEREGISTRY, 0)
+
+    # Check if the resolution change was successful
+    if ($result -eq [PInvoke.User32]::DISP_CHANGE_SUCCESSFUL)
+    {
+        Write-Host "Screen resolution updated successfully."
+    }
+    else
+    {
+        Write-Host "Failed to update screen resolution."
+    }
+}
+else
+{
+    Write-Host "Desired screen resolution is not supported by the screen."
+}
