@@ -1,0 +1,15 @@
+$WmiQuery = "SELECT * FROM Win32_DisplayConfiguration"
+
+try {
+    $DisplaySettings = Get-WmiObject -Query $WmiQuery
+
+    foreach ($Settings in $DisplaySettings) {
+        $CurrentWidth = $Settings.ScreenWidth
+        $CurrentHeight = $Settings.ScreenHeight
+        $CurrentRefreshRate = $Settings.RefreshRate
+
+        Write-Host "Current Resolution: $CurrentWidth x $CurrentHeight, Refresh Rate: $CurrentRefreshRate Hz"
+    }
+} catch {
+    Write-Host "Error: $_.Exception.Message"
+}
