@@ -1,0 +1,10 @@
+try {
+    $Monitor = Get-CimInstance -Namespace root\wmi -Class WmiMonitorBasicDisplayParams | Where-Object { $_.Active -eq $true }
+
+    $CurrentWidth = $Monitor.MaxHorizontalImageSize
+    $CurrentHeight = $Monitor.MaxVerticalImageSize
+
+    Write-Host "Current Resolution: $CurrentWidth x $CurrentHeight"
+} catch {
+    Write-Host "Error: $_.Exception.Message"
+}
