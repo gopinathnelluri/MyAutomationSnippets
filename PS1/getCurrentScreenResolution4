@@ -1,0 +1,9 @@
+try {
+    $PrimaryMonitor = Get-WmiObject -Namespace root\cimv2 -Class Win32_VideoController | Select-Object -First 1
+    $CurrentWidth = $PrimaryMonitor.CurrentHorizontalResolution
+    $CurrentHeight = $PrimaryMonitor.CurrentVerticalResolution
+
+    Write-Host "Current Resolution: $CurrentWidth x $CurrentHeight"
+} catch {
+    Write-Host "Error: $_.Exception.Message"
+}
