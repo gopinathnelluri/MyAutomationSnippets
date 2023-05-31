@@ -1,0 +1,46 @@
+$ModuleName = "DisplaySettings"
+
+# Check if the module is already installed
+$InstalledModule = Get-Module -ListAvailable | Where-Object { $_.Name -eq $ModuleName }
+
+if ($InstalledModule) {
+    Write-Host "Module '$ModuleName' is already installed."
+} else {
+    Write-Host "Module '$ModuleName' is not installed. Installing..."
+
+    # Install the module
+    try {
+        Install-Module -Name $ModuleName -Scope CurrentUser -Force
+        Write-Host "Module '$ModuleName' installed successfully."
+    } catch {
+        Write-Host "Error: Failed to install module '$ModuleName'."
+        return
+    }
+}
+
+try {
+    Import-Module $ModuleName
+
+    # Rest of the script...
+    # Define the new screen resolution
+    $NewWidth = 1920
+    $NewHeight = 1080
+
+    # Get the current resolution
+    $PrimaryMonitor = Get-DisplayResolution -Primary
+    $CurrentWidth = $PrimaryMonitor.Width
+    $CurrentHeight = $PrimaryMonitor.Height
+
+    Write-Host "Current Resolution: $CurrentWidth x $CurrentHeight"
+
+    # Update the resolution if it's different
+    if ($CurrentWidth -ne $NewWidth -or $CurrentHeight -ne $NewHeight) {
+        Set-DisplayResolution -Width $NewWidth -Height $NewHeight -Force
+
+        Write-Host "Screen resolution updated to: $NewWidth x $NewHeight"
+    } else {
+        Write-Host "Screen resolution is already set to the desired values."
+    }
+} catch {
+    Write-Host "Error: $_.Exception.Message"
+}
