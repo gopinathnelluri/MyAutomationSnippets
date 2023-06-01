@@ -1,4 +1,5 @@
 $ModuleName = "DisplaySettings"
+$NuGetProviderName = "NuGet"
 
 # Check if the module is already installed
 $InstalledModule = Get-Module -ListAvailable | Where-Object { $_.Name -eq $ModuleName }
@@ -14,6 +15,24 @@ if ($InstalledModule) {
         Write-Host "Module '$ModuleName' installed successfully."
     } catch {
         Write-Host "Error: Failed to install module '$ModuleName'."
+        return
+    }
+}
+
+# Check if the NuGet provider is installed
+$InstalledNuGetProvider = Get-PackageProvider | Where-Object { $_.Name -eq $NuGetProviderName }
+
+if ($InstalledNuGetProvider) {
+    Write-Host "NuGet provider is already installed."
+} else {
+    Write-Host "NuGet provider is not installed. Installing..."
+
+    # Install the NuGet provider
+    try {
+        Install-PackageProvider -Name $NuGetProviderName -Force
+        Write-Host "NuGet provider installed successfully."
+    } catch {
+        Write-Host "Error: Failed to install NuGet provider."
         return
     }
 }
