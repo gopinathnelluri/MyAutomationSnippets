@@ -78,3 +78,32 @@ shellApp.ShellExecute parentFolder, "properties", "", "runas", 1
 Set shellApp = Nothing
 
 
+
+'''''''''''''''''''''''''
+
+
+' Path to the file you want to right-click
+filePath = "C:\Path\to\folder with spaces\yourfile.pdf"
+
+' Create a WScript.Shell object
+Set WshShell = CreateObject("WScript.Shell")
+
+' Open the file's parent folder
+WshShell.Run "explorer.exe /select," & Chr(34) & filePath & Chr(34)
+
+' Wait for the Explorer window to open
+WScript.Sleep 1000
+
+' Send the "Menu" key to open the context menu
+WshShell.SendKeys "{AppsKey}"
+
+' Wait for the context menu to open
+WScript.Sleep 1000
+
+' Send the "R" key to select "Properties"
+WshShell.SendKeys "r"
+
+' Clean up the object
+Set WshShell = Nothing
+
+
