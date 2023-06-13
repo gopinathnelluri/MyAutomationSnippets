@@ -1,0 +1,31 @@
+Dim fso, sourceFile, destinationFile, fileName
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+' Specify the source file path
+sourceFile = "C:\path\to\source\file.txt"
+
+' Extract the file name from the source file path
+fileName = fso.GetFileName(sourceFile)
+
+' Specify the destination folder path
+destinationFolder = "C:\path\to\destination\"
+
+' Append the extracted file name to the destination folder path
+destinationFile = fso.BuildPath(destinationFolder, fileName)
+
+' Check if the source file exists
+If fso.FileExists(sourceFile) Then
+    ' Delete the existing destination file if it exists
+    If fso.FileExists(destinationFile) Then
+        fso.DeleteFile(destinationFile)
+    End If
+
+    ' Copy the source file to the destination
+    fso.CopyFile sourceFile, destinationFile
+
+    WScript.Echo "File copied successfully and overwritten."
+Else
+    WScript.Echo "Source file does not exist."
+End If
+
+Set fso = Nothing
