@@ -23,3 +23,26 @@ WScript.Sleep 500
 
 ' Step 5: Press the "Space" key to click on the "Change" button
 WshShell.SendKeys " "
+
+
+
+' Path to the file you want to right-click
+filePath = "C:\Path\to\your\file.pdf"
+
+' Create a Shell.Application object
+Set shellApp = CreateObject("Shell.Application")
+
+' Get the folder path and filename from the provided file path
+Set objFolder = shellApp.NameSpace(Left(filePath, InStrRev(filePath, "\")))
+fileName = Right(filePath, Len(filePath) - InStrRev(filePath, "\"))
+
+' Get the file item from the folder
+Set objFolderItem = objFolder.ParseName(fileName)
+
+' Invoke the right-click context menu for the file
+shellApp.ShellExecute objFolderItem, "rightclick"
+
+' Clean up the objects
+Set objFolderItem = Nothing
+Set objFolder = Nothing
+Set shellApp = Nothing
