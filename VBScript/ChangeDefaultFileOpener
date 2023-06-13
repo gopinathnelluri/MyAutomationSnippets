@@ -27,22 +27,29 @@ WshShell.SendKeys " "
 
 
 ' Path to the file you want to right-click
-filePath = "C:\Path\to\your\file.pdf"
+filePath = "C:\Path\to\folder with spaces\yourfile.pdf"
 
-' Create a Shell.Application object
+' Create a Shell object
 Set shellApp = CreateObject("Shell.Application")
 
 ' Get the folder path and filename from the provided file path
-Set objFolder = shellApp.NameSpace(Left(filePath, InStrRev(filePath, "\")))
+folderPath = Left(filePath, InStrRev(filePath, "\") - 1)
 fileName = Right(filePath, Len(filePath) - InStrRev(filePath, "\"))
 
+' Enclose folder path in double quotes
+folderPath = Chr(34) & folderPath & Chr(34)
+
+' Open the folder using Shell object
+Set folder = shellApp.NameSpace(folderPath)
+
 ' Get the file item from the folder
-Set objFolderItem = objFolder.ParseName(fileName)
+Set fileItem = folder.ParseName(fileName)
 
 ' Invoke the right-click context menu for the file
-shellApp.ShellExecute objFolderItem, "rightclick"
+fileItem.InvokeVerb("Properties")
 
 ' Clean up the objects
-Set objFolderItem = Nothing
-Set objFolder = Nothing
+Set fileItem = Nothing
+Set folder = Nothing
 Set shellApp = Nothing
+
