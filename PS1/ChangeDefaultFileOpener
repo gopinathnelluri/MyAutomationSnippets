@@ -1,0 +1,25 @@
+# Path to the file you want to modify
+$filePath = "C:\Path\to\your\file.pdf"
+
+# Step 1: Create a new instance of the Shell.Application COM object
+$shell = New-Object -ComObject Shell.Application
+
+# Step 2: Get the file's parent folder
+$parentFolder = Split-Path -Path $filePath -Parent
+
+# Step 3: Get the file object from the parent folder
+$file = $shell.Namespace($parentFolder).Items().Item((Get-Item $filePath).Name)
+
+# Step 4: Invoke the context menu verb for "Properties"
+$propertyVerb = $shell.Namespace($parentFolder).GetFolder.Items().Item($file).Verbs() | Where-Object {$_.Name -eq "Properties"}
+$propertyVerb.DoIt()
+
+# Wait for the properties window to open
+Start-Sleep -Milliseconds 1000
+
+# Step 5: Send the "Tab" key to navigate to the "Change" button
+[System.Windows.Forms.SendKeys]::SendWait("{TAB}")
+Start-Sleep -Milliseconds 500
+
+# Step 6: Press the "Space" key to click on the "Change" button
+[System.Windows.Forms.SendKeys]::SendWait(" ")
