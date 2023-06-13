@@ -1,0 +1,25 @@
+Set WshShell = WScript.CreateObject("WScript.Shell")
+
+' Path to the file you want to modify
+filePath = "C:\Path\to\your\file.txt"
+
+' Step 1: Right-click on the file
+WshShell.Run "explorer /select," & filePath
+
+' Wait for the Explorer window to open
+WScript.Sleep 1000
+
+' Step 2: Send the right arrow key to navigate to the "Properties" option
+WshShell.SendKeys "{RIGHT}"
+WScript.Sleep 500
+
+' Step 3: Open the properties window by pressing the "Enter" key
+WshShell.SendKeys "{ENTER}"
+WScript.Sleep 1000
+
+' Step 4: Send the "Tab" key to navigate to the "Change" button
+WshShell.SendKeys "{TAB}"
+WScript.Sleep 500
+
+' Step 5: Press the "Space" key to click on the "Change" button
+WshShell.SendKeys " "
