@@ -53,3 +53,28 @@ Set fileItem = Nothing
 Set folder = Nothing
 Set shellApp = Nothing
 
+
+
+
+
+
+''''''''''''''''''''''''
+
+
+' Path to the file you want to right-click
+filePath = "C:\Path\to\folder with spaces\yourfile.pdf"
+
+' Create a Shell.Application object
+Set shellApp = CreateObject("Shell.Application")
+
+' Get the parent folder path and filename from the provided file path
+parentFolder = Left(filePath, InStrRev(filePath, "\") - 1)
+fileName = Right(filePath, Len(filePath) - InStrRev(filePath, "\"))
+
+' Open the context menu for the file's parent folder
+shellApp.ShellExecute parentFolder, "properties", "", "runas", 1
+
+' Clean up the object
+Set shellApp = Nothing
+
+
