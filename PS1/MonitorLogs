@@ -1,0 +1,64 @@
+Add-Type -AssemblyName System.Windows.Forms
+
+# Create the main form
+$mainForm = New-Object System.Windows.Forms.Form
+$mainForm.Text = "Main Window"
+$mainForm.Size = New-Object System.Drawing.Size(800, 600)
+
+# Array of file paths
+$files = @(
+    "C:\Path\To\LogFile1.txt",
+    "C:\Path\To\LogFile2.txt",
+    "C:\Path\To\LogFile3.txt"
+)
+
+$activeSubForm = $null
+
+# Function to handle button click event
+function SwitchToSubForm($subForm) {
+    if ($activeSubForm) {
+        $activeSubForm.Hide()
+    }
+    $subForm.Show()
+    $activeSubForm = $subForm
+}
+
+# Loop through each file and create a subwindow
+foreach ($file in $files) {
+    $subForm = New-Object System.Windows.Forms.Form
+    $subForm.Text = "Subwindow"
+    $subForm.Size = New-Object System.Drawing.Size(400, 300)
+    $subForm.TopLevel = $false
+    $subForm.FormBorderStyle = 'FixedSingle'
+    $subForm.StartPosition = 'CenterScreen'
+
+    # Create a textbox to display file content in the subwindow
+    $textBox = New-Object System.Windows.Forms.TextBox
+    $textBox.Multiline = $true
+    $textBox.ScrollBars = 'Vertical'
+    $textBox.Dock = 'Fill'
+    $subForm.Controls.Add($textBox)
+
+    # Read and display last 10 lines of the file in the textbox
+    $last10Lines = Get-Content -Path $file -Tail 10
+    $textBox.Text = $last10Lines -join "`r`n"
+
+    # Create a button to switch to this subwindow
+    $button = New-Object System.Windows.Forms.Button
+    $button.Text = "Switch"
+    $button.Location = New-Object System.Drawing.Point(10, 10)
+    $button.Tag = $subForm
+    $button.Add_Click({ SwitchToSubForm $button.Tag })
+    $subForm.Controls.Add($button)
+
+    # Show the subwindow within the main form
+    $subForm.Hide()
+    $subForm.Show($mainForm)
+}
+
+# Show the first subwindow by default
+$firstSubForm = $mainForm.Controls[0]
+SwitchToSubForm $firstSubForm
+
+# Show the main form
+$mainForm.ShowDialog()
