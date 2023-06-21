@@ -84,15 +84,19 @@ function GetMatchingFilesInSubfolders {
     $allFiles = Get-ChildItem -Path $Directory -File -Recurse
 
     foreach ($file in $allFiles) {
-        # Check if the file name matches any of the sidebar items
-        if ($SidebarItems -contains $file.Name) {
-            $matchingFiles += $file.FullName
+        # Check if any of the sidebar items is a substring of the file name
+        foreach ($sidebarItem in $SidebarItems) {
+            if ($file.Name -like "*$sidebarItem*") {
+                $matchingFiles += $file.FullName
+                break
+            }
         }
     }
 
     # Return the list of matching file paths
     return $matchingFiles
 }
+
 
 $directoryPath = "C:\Path\To\Directory"
 $matchingFiles = GetMatchingFilesInSubfolders -Directory $directoryPath -SidebarItems $sideBarItems
