@@ -1,0 +1,55 @@
+Add-Type -AssemblyName PresentationFramework
+
+# Array of strings for the sidebar tabs
+$tabItems = @(
+    "Tab 1",
+    "Tab 2",
+    "Tab 3"
+)
+
+# Create the main window
+$mainWindow = New-Object System.Windows.Window
+$mainWindow.Title = "Sidebar Tabs Demo"
+$mainWindow.Width = 800
+$mainWindow.Height = 600
+
+# Create the main panel
+$mainPanel = New-Object System.Windows.Controls.DockPanel
+
+# Create the sidebar
+$sidebar = New-Object System.Windows.Controls.ListBox
+$sidebar.Width = 200
+$sidebar.ItemsSource = $tabItems
+
+# Create a tab control for displaying the content
+$tabControl = New-Object System.Windows.Controls.TabControl
+
+# Register the event handler for the selection changed event of the sidebar
+$sidebar.Add_SelectionChanged({
+    $selectedTab = $tabItems[$sidebar.SelectedIndex]
+    $tabItem = $tabControl.Items | Where-Object { $_.Header -eq $selectedTab }
+    $tabControl.SelectedItem = $tabItem
+})
+
+# Add the sidebar and tab control to the main panel
+[System.Windows.Controls.DockPanel]::SetDock($sidebar, "Left")
+[System.Windows.Controls.DockPanel]::SetDock($tabControl, "Right")
+$mainPanel.Children.Add($sidebar)
+$mainPanel.Children.Add($tabControl)
+
+# Add some sample tabs to the tab control
+foreach ($tabItemText in $tabItems) {
+    $tabItem = New-Object System.Windows.Controls.TabItem
+    $tabItem.Header = $tabItemText
+    $tabControl.Items.Add($tabItem)
+
+    $tabContent = New-Object System.Windows.Controls.TextBlock
+    $tabContent.Text = "This is the content of $tabItemText"
+    $tabItem.Content = $tabContent
+}
+
+# Set the main panel as the content of the main window
+$mainWindow.Content = $mainPanel
+
+# Show the main window
+$mainWindow.ShowDialog()
