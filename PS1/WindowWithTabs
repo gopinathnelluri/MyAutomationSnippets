@@ -67,3 +67,36 @@ $mainWindow.Content = $mainPanel
 
 # Show the main window
 $mainWindow.ShowDialog()
+
+function GetMatchingFilesInSubfolders {
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Directory,
+
+        [Parameter(Mandatory = $true)]
+        [string[]]$SidebarItems
+    )
+
+    # Create an empty list to store the matching file paths
+    $matchingFiles = @()
+
+    # Get all files recursively in the specified directory
+    $allFiles = Get-ChildItem -Path $Directory -File -Recurse
+
+    foreach ($file in $allFiles) {
+        # Check if the file name matches any of the sidebar items
+        if ($SidebarItems -contains $file.Name) {
+            $matchingFiles += $file.FullName
+        }
+    }
+
+    # Return the list of matching file paths
+    return $matchingFiles
+}
+
+$directoryPath = "C:\Path\To\Directory"
+$matchingFiles = GetMatchingFilesInSubfolders -Directory $directoryPath -SidebarItems $sideBarItems
+
+# Display the matching file paths
+$matchingFiles
+
