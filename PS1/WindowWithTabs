@@ -47,20 +47,19 @@ foreach ($tabItemText in $tabItems) {
     $tabControl.Items.Add($tabItem)
 
     $tabContent = New-Object System.Windows.Controls.TextBlock
-    $tabItem.AddChild($tabContent)
+    $tabItem.Content = $tabContent
 }
 
 # Register the event handler for the selection changed event of the sidebar
 $sidebar.Add_SelectionChanged({
     $selectedSidebarItem = $sideBarItems[$sidebar.SelectedIndex]
-    $selectedTabItem = $tabItems[$sidebar.SelectedIndex]
+    $selectedTabItem = $tabControl.SelectedItem
 
     # Find the selected tab item and its corresponding text block
-    $tabItem = $tabControl.Items[$sidebar.SelectedIndex]
-    $tabContent = $tabItem.Child
+    $tabContent = $selectedTabItem.Content
 
     # Update the text block content with the selected sidebar item and tab item names
-    $tabContent.Text = "Selected Sidebar Item: $selectedSidebarItem`nSelected Tab Item: $selectedTabItem"
+    $tabContent.Text = "Selected Sidebar Item: $selectedSidebarItem`nSelected Tab Item: $($selectedTabItem.Header)"
 })
 
 # Set the main panel as the content of the main window
