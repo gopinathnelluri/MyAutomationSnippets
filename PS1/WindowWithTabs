@@ -2,10 +2,13 @@ Add-Type -AssemblyName PresentationFramework
 
 # Array of strings for the sidebar items
 $sideBarItems = @(
+    "Sidebar Item 3",
     "Sidebar Item 1",
-    "Sidebar Item 2",
-    "Sidebar Item 3"
+    "Sidebar Item 2"
 )
+
+# Sort the sidebar items in ascending order
+$sideBarItems = $sideBarItems | Sort-Object
 
 # Array of strings for the tabs
 $tabItems = @(
