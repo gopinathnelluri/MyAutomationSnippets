@@ -1,0 +1,76 @@
+#If VBA7 Then
+    Declare PtrSafe Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As LongPtr
+    Declare PtrSafe Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
+    Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As LongPtr
+    Declare PtrSafe Function ShowWindow Lib "user32" (ByVal hWnd As LongPtr, ByVal nCmdShow As Long) As Long
+    Declare PtrSafe Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
+#Else
+    Declare Function GetSystemMetrics Lib "user32" (ByVal nIndex As Long) As Long
+    Declare Function SetCursorPos Lib "user32" (ByVal x As Long, ByVal y As Long) As Long
+    Declare Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As Long
+    Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
+    Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Long) As Integer
+#End If
+
+Private Const SW_MINIMIZE As Long = 6
+Private Const ChromeClass As String = "Chrome_WidgetWin_1"
+Private Const VK_SHIFT As Long = &H10
+Private Const VK_C As Long = &H43
+Private Const VK_S As Long = &H53
+
+Sub PreventSleep()
+    Dim screenWidth As Long
+    Dim screenHeight As Long
+    Dim xPos As Long
+    Dim yPos As Long
+    Dim chromeWindow As LongPtr
+    Dim shiftKeyPressed As Boolean
+    Dim cKeyPressed As Boolean
+    Dim sKeyPressed As Boolean
+    
+    ' Get screen dimensions
+    screenWidth = GetSystemMetrics(0)
+    screenHeight = GetSystemMetrics(1)
+    
+    ' Set initial cursor position
+    xPos = 100
+    yPos = 100
+    
+    ' Open Chrome browser
+    Shell "C:\Program Files\Google\Chrome\Application\chrome.exe", vbNormalFocus
+    
+    ' Find Chrome window
+    chromeWindow = FindWindow(ChromeClass, vbNullString)
+    
+    ' Minimize Chrome window
+    If chromeWindow <> 0 Then
+        ShowWindow chromeWindow, SW_MINIMIZE
+    End If
+    
+    ' Loop to continuously move cursor
+    Do While True
+        ' Check if Shift, C, and S keys are pressed
+        shiftKeyPressed = GetAsyncKeyState(VK_SHIFT) < 0
+        cKeyPressed = GetAsyncKeyState(VK_C) < 0
+        sKeyPressed = GetAsyncKeyState(VK_S) < 0
+        
+        ' Exit loop if Shift + C + S keys are pressed
+        If shiftKeyPressed And cKeyPressed And sKeyPressed Then
+            Exit Do
+        End If
+        
+        ' Move cursor
+        SetCursorPos xPos, yPos
+        
+        ' Update cursor position
+        xPos = xPos + 10 ' Adjust the movement speed horizontally
+        yPos = yPos + 10 ' Adjust the movement speed vertically
+        
+        ' Wrap around to stay within screen bounds
+        If xPos > screenWidth Then xPos = 0
+        If yPos > screenHeight Then yPos = 0
+        
+        ' Pause for a short time
+        Application.Wait Now + TimeValue("00:00:01") ' Adjust the time delay as needed
+    Loop
+End Sub
