@@ -1,0 +1,19 @@
+Set WshShell = CreateObject("WScript.Shell")
+
+' Replace "C:\Path\To\Your\File.txt" with the desired file path and name
+filePath = "C:\Path\To\Your\File.txt"
+
+' Open the Open File dialog
+WshShell.SendKeys "^o"
+
+' Wait for the dialog to open (you can adjust the sleep time as needed)
+WScript.Sleep 500
+
+' Fill in the file path and name in the dialog
+WshShell.SendKeys filePath
+
+' Wait for a short moment (you can adjust the sleep time as needed)
+WScript.Sleep 200
+
+' Simulate the Enter key stroke
+WshShell.SendKeys "{ENTER}"
