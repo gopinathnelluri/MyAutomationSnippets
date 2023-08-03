@@ -1,0 +1,46 @@
+'SendMessage
+'====================================
+
+Const WM_SETTEXT = &HC 
+Const BM_CLICK = &HF5
+
+hwnd = FindWindow(vbNullString, "Select File") 
+hEdit = FindWindowEx(hwnd, 0, "Edit", vbNullString)
+hButton = FindWindowEx(hwnd, 0, "Button", "&Open")
+
+SendMessage hEdit, WM_SETTEXT, 0, "C:\Test.txt"
+SendMessage hButton, BM_CLICK, 0, 0
+
+
+'COM Automation (for Office apps)
+'====================================
+
+
+Set dialog = Application.FileDialog(msoFileDialogOpen)
+
+dialog.InitialFileName = "C:\Test.txt"
+dialog.Show
+
+'UI Automation
+'====================================
+
+Set uia = CreateObject("UIAutomationClient")
+
+dlg = uia.FindWindowByTitle("Select File")
+edit = uia.GetChildByControlType(dlg, uia.ControlTypeId_Edit)
+button = uia.GetChildByControlType(dlg, uia.ButtonControlTypeId) 
+
+uia.SetValue(edit, "C:\Test.txt")
+uia.Invoke(button)
+
+'AutoIt
+'====================================
+; Open dialog
+Run("myapp.exe")
+WinWait("Select File")
+
+; Set text 
+ControlSetText("Select File", "", "Edit1", "C:\Test.txt")
+
+; Click button
+ControlClick("Select File", "", "Button1")
