@@ -21,3 +21,39 @@ fetch('https://jsonplaceholder.typicode.com/posts/1')
   .then(response => response.json())
   .then(data => console.log(data))
   .catch(error => console.error(error));
+
+// ================================================================================================
+
+// Create a function to intercept and log responses
+function interceptResponses(xhr) {
+  const originalOnReadyStateChange = xhr.onreadystatechange;
+  
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) { // When the request is complete
+      console.log('Intercepted Response:', xhr);
+    }
+    
+    // Call the original onreadystatechange function
+    if (originalOnReadyStateChange) {
+      originalOnReadyStateChange.apply(this, arguments);
+    }
+  };
+}
+
+// Store the original XMLHttpRequest constructor
+const OriginalXMLHttpRequest = window.XMLHttpRequest;
+
+// Override the constructor
+window.XMLHttpRequest = function () {
+  const xhr = new OriginalXMLHttpRequest();
+  
+  // Intercept responses for this instance
+  interceptResponses(xhr);
+
+  return xhr;
+};
+
+// Example usage
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts/1', true);
+xhr.send();
