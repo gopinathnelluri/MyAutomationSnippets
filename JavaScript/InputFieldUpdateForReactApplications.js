@@ -19,6 +19,38 @@
 })();
 
 
+//// ============================
+
+const inputElement = document.querySelector('input'); // Replace with the correct selector for your input field
+
+// Function to dispatch a keyboard event
+function dispatchKeyEvent(key, eventType) {
+  const event = new KeyboardEvent(eventType, {
+    key: key,
+    bubbles: true,
+    cancelable: true,
+    keyCode: key.charCodeAt(0),
+  });
+
+  inputElement.dispatchEvent(event);
+}
+
+// Simulate typing a string
+function simulateTyping(text) {
+  for (const char of text) {
+    dispatchKeyEvent(char, 'keydown');
+    dispatchKeyEvent(char, 'keypress');
+    inputElement.value += char;
+    dispatchKeyEvent(char, 'keyup');
+  }
+}
+
+// Call the function to simulate typing
+simulateTyping('New Value');
+
+
+
+
 //===============================================================
 //Ignore bellow piece of code
 //===============================================================
