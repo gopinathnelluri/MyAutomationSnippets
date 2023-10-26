@@ -1,0 +1,29 @@
+Sub ReadOutlookInbox()
+    Dim OutlookApp As Object
+    Dim OutlookNamespace As Object
+    Dim OutlookFolder As Object
+    Dim OutlookItem As Object
+    
+    ' Create an Outlook application instance
+    Set OutlookApp = CreateObject("Outlook.Application")
+    
+    ' Get the MAPI namespace
+    Set OutlookNamespace = OutlookApp.GetNamespace("MAPI")
+    
+    ' Get the inbox folder
+    Set OutlookFolder = OutlookNamespace.GetDefaultFolder(6) ' 6 corresponds to the inbox folder
+    
+    ' Loop through the items in the inbox
+    For Each OutlookItem In OutlookFolder.Items
+        ' Here you can access and manipulate each email (OutlookItem)
+        ' For example, you can read the subject and body of the email:
+        Debug.Print "Subject: " & OutlookItem.Subject
+        Debug.Print "Body: " & OutlookItem.Body
+    Next
+    
+    ' Release the objects
+    Set OutlookItem = Nothing
+    Set OutlookFolder = Nothing
+    Set OutlookNamespace = Nothing
+    Set OutlookApp = Nothing
+End Sub
