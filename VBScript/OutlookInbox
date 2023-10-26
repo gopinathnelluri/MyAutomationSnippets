@@ -27,3 +27,37 @@ Sub ReadOutlookInbox()
     Set OutlookNamespace = Nothing
     Set OutlookApp = Nothing
 End Sub
+
+Sub CountInboxFolders()
+    Dim OutlookApp As Object
+    Dim OutlookNamespace As Object
+    Dim Folder As Object
+    Dim InboxCount As Integer
+    Dim FolderType As Integer
+
+    ' Create an Outlook application instance
+    Set OutlookApp = CreateObject("Outlook.Application")
+
+    ' Get the MAPI namespace
+    Set OutlookNamespace = OutlookApp.GetNamespace("MAPI")
+
+    ' Initialize the inbox count
+    InboxCount = 0
+
+    ' Loop through all folders
+    For Each Folder In OutlookNamespace.Folders
+        ' Check if the folder is an inbox folder (6 corresponds to the inbox folder)
+        FolderType = Folder.DefaultItemType
+        If FolderType = 6 Then
+            InboxCount = InboxCount + 1
+        End If
+    Next
+
+    ' Display the count of inbox folders
+    MsgBox "The user has " & InboxCount & " inbox folder(s)."
+
+    ' Release the objects
+    Set Folder = Nothing
+    Set OutlookNamespace = Nothing
+    Set OutlookApp = Nothing
+End Sub
