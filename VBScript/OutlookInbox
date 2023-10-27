@@ -94,3 +94,33 @@ Sub ListOutlookAccounts()
     Set olApp = Nothing
 End Sub
 
+Sub ListAllOutlookAccountsTwo()
+    Dim olApp As Object
+    Dim olNamespace As Object
+    Dim olStores As Object
+    Dim olStore As Object
+
+    ' Create an Outlook application instance
+    Set olApp = CreateObject("Outlook.Application")
+    
+    ' Get the MAPI namespace
+    Set olNamespace = olApp.GetNamespace("MAPI")
+    
+    ' Get all stores (accounts)
+    Set olStores = olNamespace.Stores
+    
+    ' Loop through and display account details
+    For Each olStore In olStores
+        Debug.Print "Email Address: " & olStore.DisplayName
+        Debug.Print "Account Type: " & olStore.ExchangeStoreType
+        Debug.Print "---------------------"
+    Next olStore
+    
+    ' Release the objects
+    Set olStore = Nothing
+    Set olStores = Nothing
+    Set olNamespace = Nothing
+    Set olApp = Nothing
+End Sub
+
+
