@@ -26,3 +26,59 @@ class Program
         Marshal.ReleaseComObject(outlookApp);
     }
 }
+
+
+
+using System;
+using System.Collections.Generic;
+using Outlook = Microsoft.Office.Interop.Outlook;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Outlook.Application outlookApp = new Outlook.Application();
+        Outlook.NameSpace outlookNamespace = outlookApp.GetNamespace("MAPI");
+
+        // Get the Inbox folder of the primary account
+        Outlook.MAPIFolder inboxFolder = outlookNamespace.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
+
+        // Get the shared folders in the primary account
+        List<Outlook.MAPIFolder> sharedFolders = GetSharedFolders(inboxFolder);
+
+        // Display the names of the shared folders
+        foreach (Outlook.MAPIFolder folder in sharedFolders)
+        {
+            Console.WriteLine("Shared Folder: " + folder.Name);
+        }
+
+        // Release COM objects
+        Marshal.ReleaseComObject(inboxFolder);
+        foreach (Outlook.MAPIFolder folder in sharedFolders)
+        {
+            Marshal.ReleaseComObject(folder);
+        }
+        Marshal.ReleaseComObject(outlookNamespace);
+        Marshal.ReleaseComObject(outlookApp);
+    }
+
+    static List<Outlook.MAPIFolder> GetSharedFolders(Outlook.MAPIFolder folder)
+    {
+        List<Outlook.MAPIFolder> sharedFolders = new List<Outlook.MAPIFolder>();
+
+        foreach (Outlook.MAPIFolder subfolder in folder.Folders)
+        {
+            if (subfolder.Name.StartsWith("Shared - "))
+            {
+                sharedFolders.Add(subfolder);
+            }
+
+            if (subfolder.Folders.Count > 0)
+            {
+                sharedFolders.AddRange(GetSharedFolders(subfolder));
+            }
+        }
+
+        return sharedFolders;
+    }
+}
