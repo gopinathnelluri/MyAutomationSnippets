@@ -61,3 +61,36 @@ Sub CountInboxFolders()
     Set OutlookNamespace = Nothing
     Set OutlookApp = Nothing
 End Sub
+
+Sub ListOutlookAccounts()
+    Dim olApp As Object
+    Dim olNamespace As Object
+    Dim olAccounts As Object
+    Dim olAccount As Object
+    Dim i As Integer
+
+    ' Create an Outlook application instance
+    Set olApp = CreateObject("Outlook.Application")
+    
+    ' Get the MAPI namespace
+    Set olNamespace = olApp.GetNamespace("MAPI")
+    
+    ' Get the accounts
+    Set olAccounts = olNamespace.Accounts
+    
+    ' Loop through and display account details
+    For i = 1 To olAccounts.Count
+        Set olAccount = olAccounts.Item(i)
+        Debug.Print "Email Address: " & olAccount.SmtpAddress
+        Debug.Print "Account Type: " & olAccount.AccountType
+        Debug.Print "DisplayName: " & olAccount.DisplayName
+        Debug.Print "---------------------"
+    Next i
+    
+    ' Release the objects
+    Set olAccount = Nothing
+    Set olAccounts = Nothing
+    Set olNamespace = Nothing
+    Set olApp = Nothing
+End Sub
+
