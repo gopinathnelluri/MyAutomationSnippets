@@ -1,0 +1,28 @@
+using Outlook = Microsoft.Office.Interop.Outlook;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Outlook.Application outlookApp = new Outlook.Application();
+        Outlook.NameSpace outlookNamespace = outlookApp.GetNamespace("MAPI");
+
+        // Get your existing account (primary account)
+        Outlook.Account primaryAccount = outlookNamespace.Accounts[1]; // 1 is typically the primary account
+
+        // Create a recipient for the shared mailbox
+        Outlook.Recipient recipient = outlookNamespace.CreateRecipient("shared-mailbox@example.com");
+
+        // Resolve the recipient and add it as an additional mailbox
+        recipient.Resolve();
+        Outlook.Account additionalAccount = recipient.GetSharedDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox).Parent;
+
+        // Display the display name of the added account
+        Console.WriteLine("Added account: " + additionalAccount.DisplayName);
+
+        // Release COM objects
+        Marshal.ReleaseComObject(recipient);
+        Marshal.ReleaseComObject(outlookNamespace);
+        Marshal.ReleaseComObject(outlookApp);
+    }
+}
