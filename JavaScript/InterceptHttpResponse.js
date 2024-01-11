@@ -166,3 +166,41 @@ interceptNetworkRequests({
     onError: console.log,
     onLoad: console.log
 });
+
+
+// 5
+
+// Save the original fetch function
+var originalFetch = window.fetch;
+
+// Define your wrapper function
+function fetchWithInterceptor(url, options) {
+  return new Promise((resolve, reject) => {
+    originalFetch(url, options)
+      .then(response => {
+        // Your logic to handle the response here
+        console.log(response);
+
+        // You can access response data using response.json(), response.text(), etc.
+        return response.text(); // For example, reading response as text
+
+      })
+      .then(data => {
+        // Your logic to handle the response data here
+        console.log(data);
+
+        // Resolve the promise with the original response
+        resolve(data);
+      })
+      .catch(error => {
+        // Handle errors
+        console.error("Error:", error);
+        reject(error);
+      });
+  });
+}
+
+// Replace the original fetch function with your wrapper function
+window.fetch = fetchWithInterceptor;
+
+// Now, all calls to fetch will use your wrapper function
