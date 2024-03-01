@@ -1,1 +1,39 @@
+Option Explicit
+
+Sub CreateDraftEmail()
+    Dim olApp As Object
+    Dim olDraft As Object
+    Dim olInspector As Object
+    
+    ' Create Outlook Application object
+    Set olApp = CreateObject("Outlook.Application")
+    
+    ' Create a new mail item
+    Set olDraft = olApp.CreateItem(0)
+    
+    ' Set email properties
+    With olDraft
+        .Subject = "Your Subject Here"
+        .To = "recipient@example.com"
+        .CC = "cc@example.com"
+        .BCC = "bcc@example.com"
+        .Body = "Type your email body here."
+        ' Uncomment the line below if you want to display the email before sending
+        '.Display
+    End With
+    
+    ' Get the Inspector object for the draft email
+    Set olInspector = olDraft.GetInspector
+    
+    ' Show the email as a draft
+    olInspector.Display
+    
+    ' Clean up objects
+    Set olDraft = Nothing
+    Set olInspector = Nothing
+    Set olApp = Nothing
+End Sub
+
+' Call the subroutine to create the draft email
+CreateDraftEmail
 
