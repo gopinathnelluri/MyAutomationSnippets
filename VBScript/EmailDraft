@@ -43,6 +43,12 @@ Sub CreateDraftEmail()
         .Body = "Type your email body here."
         ' Uncomment the line below if you want to display the email before sending
         '.Display
+
+        ' Add attachments
+        attachmentPath = "C:\Path\To\Your\File.txt" ' Modify the path as needed
+        If attachmentPath <> "" Then
+            Set olAttachment = .Attachments.Add(attachmentPath)
+        End If
     End With
     
     ' Get the Inspector object for the draft email
