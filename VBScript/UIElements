@@ -1,0 +1,55 @@
+Option Explicit
+
+Private Declare PtrSafe Function FindWindow Lib "user32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As LongPtr
+Private Declare PtrSafe Function GetWindowText Lib "user32" Alias "GetWindowTextA" (ByVal hWnd As LongPtr, ByVal lpString As String, ByVal cch As Long) As Long
+Private Declare PtrSafe Function GetClassName Lib "user32" Alias "GetClassNameA" (ByVal hWnd As LongPtr, ByVal lpClassName As String, ByVal nMaxCount As Long) As Long
+Private Declare PtrSafe Function GetWindow Lib "user32" (ByVal hWnd As LongPtr, ByVal wCmd As Long) As LongPtr
+Private Declare PtrSafe Function GetWindowRect Lib "user32" (ByVal hWnd As LongPtr, lpRect As rect) As Long
+
+Private Const GW_CHILD As Long = 5 ' Define GW_CHILD constant
+Private Const GW_HWNDNEXT As Long = 2 ' Define GW_HWNDNEXT constant
+
+Private Type rect
+    Left As Long
+    Top As Long
+    Right As Long
+    Bottom As Long
+End Type
+
+Public Sub EnumerateWindowsWithTitle(ByVal title As String)
+    Dim hWnd As LongPtr
+    hWnd = FindWindow(vbNullString, title)
+    If hWnd = 0 Then
+        MsgBox "No windows found with title: " & title
+        Exit Sub
+    End If
+    EnumerateChildWindows hWnd
+End Sub
+
+Private Sub EnumerateChildWindows(ByVal parentHwnd As LongPtr)
+    Dim childHwnd As LongPtr
+    Dim className As String * 256
+    Dim windowText As String * 256
+    Dim rect As rect
+    
+    childHwnd = GetWindow(parentHwnd, GW_CHILD)
+    Do While childHwnd <> 0
+        GetClassName childHwnd, className, Len(className)
+        GetWindowText childHwnd, windowText, Len(windowText)
+        GetWindowRect childHwnd, rect
+        ' Filter and process UI elements as needed
+        Debug.Print "Class Name: " & Left$(className, InStr(className, vbNullChar) - 1)
+        Debug.Print "Window Text: " & Left$(windowText, InStr(windowText, vbNullChar) - 1)
+        Debug.Print "Position: " & rect.Left & ", " & rect.Top
+        Debug.Print "Size: " & (rect.Right - rect.Left) & "x" & (rect.Bottom - rect.Top)
+        Debug.Print "-------------------------"
+        EnumerateChildWindows childHwnd ' Recursive call to enumerate child windows
+        childHwnd = GetWindow(childHwnd, GW_HWNDNEXT)
+    Loop
+End Sub
+
+
+Sub TestEnumeration()
+    EnumerateWindowsWithTitle "MaheshBro"
+End Sub
+
