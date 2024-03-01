@@ -48,8 +48,33 @@ Private Sub EnumerateChildWindows(ByVal parentHwnd As LongPtr)
     Loop
 End Sub
 
+Public Sub EnumerateWindowsWithPartialTitle(ByVal partialTitle As String)
+    Dim hWnd As LongPtr
+    hWnd = FindWindowWithPartialTitle(partialTitle)
+    If hWnd = 0 Then
+        MsgBox "No windows found with partial title: " & partialTitle
+        Exit Sub
+    End If
+    EnumerateChildWindows hWnd
+End Sub
+
+Private Function FindWindowWithPartialTitle(ByVal partialTitle As String) As LongPtr
+    Dim hWnd As LongPtr
+    hWnd = FindWindow(vbNullString, vbNullString)
+    Do While hWnd <> 0
+        Dim windowText As String * 256
+        GetWindowText hWnd, windowText, Len(windowText)
+        If InStr(1, windowText, partialTitle, vbTextCompare) > 0 Then
+            FindWindowWithPartialTitle = hWnd
+            Exit Function
+        End If
+        hWnd = GetWindow(hWnd, GW_HWNDNEXT)
+    Loop
+    FindWindowWithPartialTitle = 0
+End Function
+
 
 Sub TestEnumeration()
-    EnumerateWindowsWithTitle "MaheshBro"
+   EnumerateWindowsWithPartialTitle "Sample Title"
 End Sub
 
