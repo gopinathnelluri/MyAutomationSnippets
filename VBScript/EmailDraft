@@ -1,5 +1,28 @@
 Option Explicit
 
+Function GetCurrentWeekDates()
+    Dim dtToday, dtFirstDay, dtLastDay
+    Dim strFirstDay, strLastDay
+
+    dtToday = Date
+
+    ' Calculate first day of the current week (Sunday)
+    dtFirstDay = DateAdd("d", 1 - Weekday(dtToday, vbSunday), dtToday)
+    strFirstDay = FormatDateTime(dtFirstDay, 2) ' 2 represents vbShortDate format
+
+    ' Calculate last day of the current week (Saturday)
+    dtLastDay = DateAdd("d", 6 - Weekday(dtToday, vbSunday), dtToday)
+    strLastDay = FormatDateTime(dtLastDay, 2) ' 2 represents vbShortDate format
+
+    ' Return the result in the desired format
+    GetCurrentWeekDates = strFirstDay & " - " & strLastDay
+End Function
+
+' Example usage:
+' Dim weekDates
+' weekDates = GetCurrentWeekDates()
+' WScript.Echo weekDates
+
 Sub CreateDraftEmail()
     Dim olApp As Object
     Dim olDraft As Object
