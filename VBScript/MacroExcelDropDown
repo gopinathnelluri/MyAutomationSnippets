@@ -3,23 +3,43 @@ Sub PopulateDropdown()
     Dim cell As Range
     Dim strList As String
     
-    'Assuming your options are in column A starting from cell A1
-    Set rng = ThisWorkbook.Sheets("Sheet1").Range("A1:A10") 'Adjust range as needed
+    ' Specify the worksheet where your options are located
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Adjust sheet name as needed
+    
+    ' Assuming your options are in column A starting from cell A1
+    Set rng = ws.Range("A1:A10") ' Adjust range as needed
+    
+    ' Check if there are values in the range
+    If rng Is Nothing Then
+        MsgBox "No values found in the specified range.", vbExclamation
+        Exit Sub
+    End If
     
     For Each cell In rng
         strList = strList & cell.Value & ","
     Next cell
     
-    strList = Left(strList, Len(strList) - 1) 'Remove the last comma
+    ' Check if any values were collected
+    If Len(strList) = 0 Then
+        MsgBox "No values found in the specified range.", vbExclamation
+        Exit Sub
+    End If
     
-    'Define a named range called "DropdownOptions" and assign the options
+    strList = Left(strList, Len(strList) - 1) ' Remove the last comma
+    
+    ' Define a named range called "DropdownOptions" and assign the options
+    On Error Resume Next ' Ignore errors if the named range already exists
+    ThisWorkbook.Names("DropdownOptions").Delete ' Delete the named range if it already exists
+    On Error GoTo 0 ' Reset error handling
+    
     ThisWorkbook.Names.Add Name:="DropdownOptions", RefersTo:=strList
     
-    'Assign the named range to the cell where you want the dropdown
-    With ThisWorkbook.Sheets("Sheet1").Range("B1") 'Adjust cell as needed
-        .Validation.Delete
-        .Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
-        xlBetween, Formula1:="=DropdownOptions"
-        .Validation.ShowDropDown = True
+    ' Assign the named range to the cell where you want the dropdown
+    With ws.Range("B1").Validation ' Adjust cell as needed
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, _
+             Formula1:="=DropdownOptions"
+        .ShowDropDown = True
     End With
 End Sub
