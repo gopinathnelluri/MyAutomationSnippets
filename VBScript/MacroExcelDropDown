@@ -1,0 +1,25 @@
+Sub PopulateDropdown()
+    Dim rng As Range
+    Dim cell As Range
+    Dim strList As String
+    
+    'Assuming your options are in column A starting from cell A1
+    Set rng = ThisWorkbook.Sheets("Sheet1").Range("A1:A10") 'Adjust range as needed
+    
+    For Each cell In rng
+        strList = strList & cell.Value & ","
+    Next cell
+    
+    strList = Left(strList, Len(strList) - 1) 'Remove the last comma
+    
+    'Define a named range called "DropdownOptions" and assign the options
+    ThisWorkbook.Names.Add Name:="DropdownOptions", RefersTo:=strList
+    
+    'Assign the named range to the cell where you want the dropdown
+    With ThisWorkbook.Sheets("Sheet1").Range("B1") 'Adjust cell as needed
+        .Validation.Delete
+        .Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+        xlBetween, Formula1:="=DropdownOptions"
+        .Validation.ShowDropDown = True
+    End With
+End Sub
